@@ -43,29 +43,69 @@ function playRound(playerSelection, computerSelection) {
 function playGame() {
     let playerSelection, computerSelection;
     let result;
+    let roundsPlayed = 0;
     let playerWin = 0, computerWin = 0;
-    for (let i = 0; i < 5; i++) {
-        playerSelection = prompt("Choose either rock, paper og scissors");
-        computerSelection = getComputerChoice();
-        result = playRound(playerSelection, computerSelection);
-        if (result == "win") {
-            playerWin++;
-            console.log(`You Win! ${playerSelection} beats ${computerSelection}`);
-        } else if (result == "lose") {
-            computerWin++;
-            console.log(`You Lose! ${computerSelection} beats ${playerSelection}`);
-        } else {
-            console.log(`It's a tie! both chooses ${playerSelection}`);
+    let endGame = false;
+    
+    let btnSelection = document.querySelector(".selection-container");
+    btnSelection.addEventListener("click", (e) => {
+        if (endGame === false) {
+            roundsPlayed++;
+            playerSelection = e.target.className;
+            computerSelection = getComputerChoice();
+            result = playRound(playerSelection, computerSelection);
+            if (result === "win") {
+                playerWin++;
+            } else if (result === "lose") {
+                computerWin++;
+            } else {
+            }
+
+            printResults(roundsPlayed, result, playerSelection, computerSelection);
+
+            if (roundsPlayed > 0) {
+                if (playerWin === 5) {
+                    printEndResults("Player");
+                    endGame = true;
+                } else if (computerWin === 5) {
+                    printEndResults("Computer");
+                    endGame = true;
+                }     
+            }
         }
+    });
+    
+    let btnResetGame = document.querySelector(".reset-game");
+    btnResetGame.addEventListener("click", () => {
+        roundsPlayed = 0;
+        playerWin = 0;
+        computerWin = 0;
+        endGame = false;
+
+        let resultText = document.querySelector(".rounds-played");
+        resultText.replaceChildren("Rounds played:");
+    });
+}
+
+function printResults(roundsPlayed, result, playerSelection, computerSelection) {
+    let resultText = document.querySelector(".rounds-played");
+    const para = document.createElement("p");
+    if (result === "win") {
+        para.textContent = `Round ${roundsPlayed}: You Win! ${playerSelection} beats ${computerSelection}`;
+    } else if (result === "lose") {
+        para.textContent = `Round ${roundsPlayed}: You Lose! ${computerSelection} beats ${playerSelection}`;
+    } else {
+        para.textContent = `Round ${roundsPlayed}: It's a tie! both chooses ${playerSelection}`;
     }
 
-    if (playerWin > computerWin) {
-        console.log(`Player win by ${playerWin} to computer ${computerWin}.`);
-    } else if (computerWin > playerWin) {
-        console.log(`Computer win by ${computerWin} to player ${playerWin}.`);
-    } else {
-        console.log(`It's a tie by ${playerWin} to computer ${computerWin}.`);
-    }
+    resultText.appendChild(para);
+}
+
+function printEndResults(winner) {
+    let resultText = document.querySelector(".rounds-played");
+    const para = document.createElement("p");
+    para.textContent = `${winner} wins by reaching 5 wins first!`
+    resultText.appendChild(para);
 }
 
 playGame();
